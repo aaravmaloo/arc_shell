@@ -7,51 +7,39 @@ while True:
     login = os.getlogin()
     cur_path = os.getcwd()
 
-    # Display the prompt
     print(f"{login}@{comp_name}$ {cur_path} > ", end="", flush=True)
 
-    # Collect user input character by character
     usr_cmd = ""
     while True:
-        char = msvcrt.getch()  # Get a single character without requiring Enter
+        char = msvcrt.getch()
 
-        # Check for Esc key (ASCII 27)
-        if char == b"\x1b":  # Esc key
+        if char == b"\x1b":
             exit(0)
 
-        # Check for Enter key (ASCII 13)
-        elif char == b"\r":  # Enter key
-            print()  # Move to next line after command
+        elif char == b"\r":
+            print()
             break
 
-        # Handle backspace (ASCII 8)
-        elif char == b"\x08":  # Backspace key
-            if usr_cmd:  # Only process if there's something to delete
-                usr_cmd = usr_cmd[:-1]  # Remove last character
-                print(
-                    "\b \b", end="", flush=True
-                )  # Move cursor back, overwrite with space, move back again
+        elif char == b"\x08":
+            if usr_cmd:
+                usr_cmd = usr_cmd[:-1]
+                print("\b \b", end="", flush=True)
 
-        # Handle printable characters
         else:
             try:
                 decoded_char = char.decode("utf-8")
                 usr_cmd += decoded_char
-                print(decoded_char, end="", flush=True)  # Echo the character
+                print(decoded_char, end="", flush=True)
             except UnicodeDecodeError:
-                pass  # Ignore non-UTF-8 characters
+                pass
 
-    # Clean up the command input
     usr_cmd = usr_cmd.strip()
 
-    # Split the input into command and arguments
     cmd_parts = usr_cmd.split()
 
-    # Handle 'cd' command separately (PowerShell uses 'Set-Location' or 'cd' alias)
     if cmd_parts and cmd_parts[0].lower() == "cd":
         if len(cmd_parts) > 1:
             try:
-                # Change directory using os.chdir (works for both cmd and PowerShell)
                 os.chdir(cmd_parts[1])
             except FileNotFoundError:
                 print(f"Directory not found: {cmd_parts[1]}")
@@ -62,9 +50,7 @@ while True:
         else:
             print("Please specify a directory to change to.")
     else:
-        # Run other commands using PowerShell
         try:
-            # Use powershell.exe as the shell
             subprocess.run(["powershell.exe", "-Command", usr_cmd], shell=False)
         except Exception as e:
             print(f"Error executing command: {e}")
