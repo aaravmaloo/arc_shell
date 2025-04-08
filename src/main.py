@@ -17,7 +17,6 @@ while True:
 
         # Check for Esc key (ASCII 27)
         if char == b"\x1b":  # Esc key
-            print("\nExiting...")
             exit(0)
 
         # Check for Enter key (ASCII 13)
