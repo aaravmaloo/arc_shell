@@ -48,11 +48,11 @@ while True:
     # Split the input into command and arguments
     cmd_parts = usr_cmd.split()
 
-    # Handle 'cd' command separately
+    # Handle 'cd' command separately (PowerShell uses 'Set-Location' or 'cd' alias)
     if cmd_parts and cmd_parts[0].lower() == "cd":
         if len(cmd_parts) > 1:
             try:
-                # Change directory using os.chdir
+                # Change directory using os.chdir (works for both cmd and PowerShell)
                 os.chdir(cmd_parts[1])
             except FileNotFoundError:
                 print(f"Directory not found: {cmd_parts[1]}")
@@ -63,8 +63,9 @@ while True:
         else:
             print("Please specify a directory to change to.")
     else:
-        # Run other commands using subprocess
+        # Run other commands using PowerShell
         try:
-            subprocess.run(usr_cmd, shell=True)
+            # Use powershell.exe as the shell
+            subprocess.run(["powershell.exe", "-Command", usr_cmd], shell=False)
         except Exception as e:
             print(f"Error executing command: {e}")
